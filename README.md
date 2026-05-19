@@ -1,6 +1,7 @@
 # digital_pecs
 
 Digital PECS
+Flutter Version : 3.41.0
 
 ## Getting Started
 
