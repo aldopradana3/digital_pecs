@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/color/app_colors.dart';
+import '../../data/app_data.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -49,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
+  Future<void> _login(String email, String password) async {
     setState(() {
       _isSubmitted = true;
     });
@@ -62,11 +63,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
+    // simpan ke class
+    UserLogin.email = email;
+    UserLogin.password = password;
+
     setState(() => _isLoading = false);
 
     Navigator.pushReplacementNamed(
       context,
-      AppRoutes.home,
+      AppRoutes.main,
     );
   }
 
@@ -350,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             'Ingat Saya',
                             style: GoogleFonts.poppins(
-                              fontSize: 13.sp,
+                              fontSize: 13.5.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.biru,
                             ),
@@ -368,7 +373,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : () {
                             FocusScope.of(context).unfocus();
 
-                            _login();
+                            _login(_emailController.text, _passwordController.text);
                           },
 
                           style: ElevatedButton.styleFrom(
