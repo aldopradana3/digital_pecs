@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'core/routes/app_routes.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/signup_screen.dart';
-import 'features/home/home_screen.dart';
+import 'features/screen/main_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/services.dart';
 
@@ -39,13 +39,17 @@ class MyApp extends StatelessWidget {
           title: 'Digital PECS',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            scaffoldBackgroundColor: const Color(0xFFFAFAFA),
             useMaterial3: true,
+            scaffoldBackgroundColor: Colors.white,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.white,
+              brightness: Brightness.light,
+            ),
           ),
           initialRoute: AppRoutes.login,
           routes: {
             AppRoutes.login : (context) => const LoginScreen(),
-            AppRoutes.home  : (context) => const HomeScreen(),
+            AppRoutes.main  : (context) => const MainScreen(),
             AppRoutes.daftar  : (context) => const DaftarScreen(),
           },
         );
