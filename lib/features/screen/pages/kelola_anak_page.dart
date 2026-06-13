@@ -142,7 +142,7 @@ class KelolaAnakPage extends StatelessWidget {
                             ),
                           ),
                         ),
-
+                        SizedBox(width: 2.h),
                         Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.rotationY(math.pi),
@@ -159,6 +159,7 @@ class KelolaAnakPage extends StatelessWidget {
                 ),
               );
             }).toList(),
+            SizedBox(height: 7.5.h,)
           ],
         ),
       ),

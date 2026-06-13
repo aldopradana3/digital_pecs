@@ -72,6 +72,9 @@ class _MainScreenState extends State<MainScreen>
     _tabController = TabController(length: 8, vsync: this);
 
     _tabController.addListener(() {
+      if (_isNavigating) return;        // ← abaikan saat navigasi programatik
+      if (_tabController.indexIsChanging) return; // ← abaikan event animasi
+
       setState(() {
         currentIndex = _tabController.index;
       });
@@ -90,22 +93,52 @@ class _MainScreenState extends State<MainScreen>
   /// =========================
 
   void goToPage(int index, {bool changeBottomNav = false}) {
-    /// HANYA SIMPAN HISTORY
-    /// UNTUK DETAIL PAGE
     if (index == pageTambahAnak ||
         index == pageDetailAnak ||
         index == pageDetailModul) {
       pageHistory.add(currentIndex);
     }
 
+    _isNavigating = true; // ← kunci listener
+
     setState(() {
       currentIndex = index;
-
       if (changeBottomNav) {
         currentBottomNavIndex = index;
       }
-
       _tabController.index = index;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isNavigating = false; // ← buka kembali setelah frame selesai
+    });
+  }
+
+  void _goBack() {
+    if (pageHistory.isEmpty) {
+      goToPage(pageHome, changeBottomNav: true);
+      return;
+    }
+
+    final previousPage = pageHistory.removeLast();
+
+    _isNavigating = true; // ← kunci listener
+
+    setState(() {
+      currentIndex = previousPage;
+
+      if (previousPage == pageHome ||
+          previousPage == pageKelolaAnak ||
+          previousPage == pageKelolaModul ||
+          previousPage == pageAkun) {
+        currentBottomNavIndex = previousPage;
+      }
+
+      _tabController.index = previousPage;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isNavigating = false;
     });
   }
 
@@ -192,6 +225,12 @@ class _MainScreenState extends State<MainScreen>
   String selectedAlamatSiswa = "";
   String selectedTglLahirSiswa = "";
 
+
+  String selectedIdModul = "";
+  String selectedNamaModul = "";
+
+  bool _isNavigating = false;
+
   @override
   Widget build(BuildContext context) {
     debugPaintSizeEnabled = false;
@@ -261,21 +300,7 @@ class _MainScreenState extends State<MainScreen>
       /// TAMBAH ANAK
       TambahAnakPage(
         onGoBack: () {
-          final previousPage = pageHistory.removeLast();
-
-          setState(() {
-            currentIndex = previousPage;
-
-            /// UPDATE ACTIVE NAVBAR
-            if (previousPage == pageHome ||
-                previousPage == pageKelolaAnak ||
-                previousPage == pageKelolaModul ||
-                previousPage == pageAkun) {
-              currentBottomNavIndex = previousPage;
-            }
-
-            _tabController.index = previousPage;
-          });
+          _goBack();
         },
       ),
 
@@ -288,33 +313,38 @@ class _MainScreenState extends State<MainScreen>
         alamatSiswa: selectedAlamatSiswa,
         tglLahirSiswa: selectedTglLahirSiswa,
         onGoBack: () {
-          final previousPage = pageHistory.removeLast();
-
-          setState(() {
-            currentIndex = previousPage;
-
-            /// UPDATE ACTIVE NAVBAR
-            if (previousPage == pageHome ||
-                previousPage == pageKelolaAnak ||
-                previousPage == pageKelolaModul ||
-                previousPage == pageAkun) {
-              currentBottomNavIndex = previousPage;
-            }
-
-            _tabController.index = previousPage;
-          });
+          _goBack();
         },
       ),
 
       /// KELOLA MODUL
       KelolaModulPage(
-        onOpenDetailModul: () {
+        onOpenDetailModul: (idModul, namaModul) async {
+          setState(() {
+            selectedIdModul = idModul;
+            selectedNamaModul = namaModul;
+          });
+
+          await WidgetsBinding.instance.endOfFrame;
           goToPage(pageDetailModul);
+        },
+
+        onGoBack: () {
+          pageHistory.clear();
+
+          goToPage(pageHome, changeBottomNav: true);
         },
       ),
 
       /// DETAIL MODUL
-      const DetailModulPage(),
+      DetailModulPage(
+        idModul: selectedIdModul,
+        namaModul: selectedNamaModul,
+        onGoBack: () {
+          _goBack();
+        },
+
+      ),
 
       /// AKUN
       AkunPage(),
@@ -325,51 +355,25 @@ class _MainScreenState extends State<MainScreen>
       /// BACK BUTTON HP
       /// =========================
       onWillPop: () async {
-
         FocusScope.of(context).unfocus();
 
-        /// =========================
-        /// JIKA DI HALAMAN ANAK/MODUL/AKUN
-        /// =========================
         if (currentIndex == pageKelolaAnak ||
             currentIndex == pageKelolaModul ||
-            currentIndex == pageAkun) {
+            currentIndex == pageAkun ||
+            currentIndex == pageMariBermain) {
           pageHistory.clear();
-
           goToPage(pageHome, changeBottomNav: true);
-
           return false;
         }
 
-        /// =========================
-        /// JIKA ADA HISTORY DETAIL PAGE
-        /// =========================
-
-        if (pageHistory.isNotEmpty) {
-          final previousPage = pageHistory.removeLast();
-
-          setState(() {
-            currentIndex = previousPage;
-
-            /// UPDATE ACTIVE NAVBAR
-            if (previousPage == pageHome ||
-                previousPage == pageKelolaAnak ||
-                previousPage == pageKelolaModul ||
-                previousPage == pageAkun) {
-              currentBottomNavIndex = previousPage;
-            }
-
-            _tabController.index = previousPage;
-          });
-
+        if (currentIndex == pageTambahAnak ||
+            currentIndex == pageDetailAnak ||
+            currentIndex == pageDetailModul) {
+          _goBack();
           return false;
         }
 
-        /// =========================
-        /// JIKA SUDAH DI HOME
-        /// =========================
-
-        return true;
+        return true; // Home → keluar app
       },
 
       child: Scaffold(
