@@ -1,4 +1,3 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,6 +27,13 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
   late TextEditingController tglLahirController;
   String tglLahirValue = "";
 
+  // Error messages
+  String? namaError;
+  String? emailError;
+  String? nomorHpError;
+  String? alamatError;
+  String? tglLahirError;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +52,81 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
     alamatController.dispose();
     tglLahirController.dispose();
     super.dispose();
+  }
+
+  // Helper widget: field label
+  Widget _buildLabel(String label) {
+    return Text(
+      label,
+      style: GoogleFonts.poppins(
+        fontSize: 15.sp,
+        fontWeight: FontWeight.w500,
+        color: AppColors.abu_abu,
+      ),
+    );
+  }
+
+  // Helper widget: inline error text
+  Widget _buildError(String? error) {
+    if (error == null || error.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(top: 0.4.h, left: 6.h),
+      child: Text(
+        error,
+        style: GoogleFonts.poppins(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w400,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  // Helper widget: bottom-bordered field row
+  Widget _buildFieldRow({
+    required String svgIcon,
+    required double iconHeight,
+    required Widget field,
+    required String? error,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 100.w,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: error != null ? Colors.red : AppColors.abu_abu,
+                width: 1.5,
+              ),
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 6.h,
+                    height: 4.h,
+                    child: Center(
+                      child: SvgPicture.asset(
+                        svgIcon,
+                        height: iconHeight,
+                      ),
+                    ),
+                  ),
+                  Expanded(child: field),
+                ],
+              ),
+              SizedBox(height: 0.5.h),
+            ],
+          ),
+        ),
+        _buildError(error),
+      ],
+    );
   }
 
   @override
@@ -127,7 +208,6 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
             Container(
               width: 100.w,
               padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 3.h),
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -157,355 +237,214 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Nama',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
+
+                        // ── NAMA ──
+                        _buildLabel('Nama'),
+                        _buildFieldRow(
+                          svgIcon: 'assets/icon/icon_user.svg',
+                          iconHeight: 2.65.h,
+                          error: namaError,
+                          field: TextFormField(
+                            controller: namaController,
+                            keyboardType: TextInputType.name,
+                            minLines: 1,
+                            maxLines: null,
+                            onChanged: (_) {
+                              if (namaError != null) {
+                                setState(() => namaError = null);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan Nama Anak',
+                              isDense: true,
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.abu_abu,
-                                width: 1.5,
                               ),
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_user.svg',
-                                        height: 2.65.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: namaController,
-                                      keyboardType: TextInputType.name,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: InputDecoration(
-                                        hintText: 'Masukkan Nama Anak',
-                                        isDense: true,
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.abu_abu,
-                                        ),
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.abu_abu,
+                            ),
                           ),
                         ),
                         SizedBox(height: 1.5.h),
-                        Text(
-                          'Email',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
+
+                        // ── EMAIL ──
+                        _buildLabel('Email'),
+                        _buildFieldRow(
+                          svgIcon: 'assets/icon/icon_email.svg',
+                          iconHeight: 2.h,
+                          error: emailError,
+                          field: TextFormField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            minLines: 1,
+                            maxLines: null,
+                            onChanged: (_) {
+                              if (emailError != null) {
+                                setState(() => emailError = null);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Masukkan Email Anak",
+                              isDense: true,
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.abu_abu,
-                                width: 1.5,
                               ),
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_email.svg',
-                                        height: 2.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: emailController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: InputDecoration(
-                                        hintText: "Masukkan Email Anak",
-                                        isDense: true,
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.abu_abu,
-                                        ),
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.abu_abu,
+                            ),
                           ),
                         ),
                         SizedBox(height: 1.5.h),
-                        Text(
-                          'Nomor HP',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
+
+                        // ── NOMOR HP ──
+                        _buildLabel('Nomor HP'),
+                        _buildFieldRow(
+                          svgIcon: 'assets/icon/icon_telpon.svg',
+                          iconHeight: 2.5.h,
+                          error: nomorHpError,
+                          field: TextFormField(
+                            controller: nomorHpController,
+                            keyboardType: TextInputType.phone,
+                            minLines: 1,
+                            maxLines: null,
+                            onChanged: (_) {
+                              if (nomorHpError != null) {
+                                setState(() => nomorHpError = null);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Masukkan Nomor Hp Anak",
+                              isDense: true,
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.abu_abu,
-                                width: 1.5,
                               ),
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                             ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_telpon.svg',
-                                        height: 2.5.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: nomorHpController,
-                                      keyboardType: TextInputType.phone,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: InputDecoration(
-                                        hintText: "Masukkan Nomor Hp Anak",
-                                        isDense: true,
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.abu_abu,
-                                        ),
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.abu_abu,
+                            ),
                           ),
                         ),
                         SizedBox(height: 1.5.h),
-                        Text(
-                          'Alamat',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
+
+                        // ── ALAMAT ──
+                        _buildLabel('Alamat'),
+                        _buildFieldRow(
+                          svgIcon: 'assets/icon/icon_alamat.svg',
+                          iconHeight: 2.5.h,
+                          error: alamatError,
+                          field: TextFormField(
+                            controller: alamatController,
+                            keyboardType: TextInputType.streetAddress,
+                            minLines: 1,
+                            maxLines: null,
+                            onChanged: (_) {
+                              if (alamatError != null) {
+                                setState(() => alamatError = null);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Masukkan Alamat Anak",
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.abu_abu,
-                                width: 1.5,
                               ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.abu_abu,
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_alamat.svg',
-                                        height: 2.5.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: alamatController,
-                                      keyboardType: TextInputType.streetAddress,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: InputDecoration(
-                                        hintText: "Masukkan Alamat Anak",
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.abu_abu,
-                                        ),
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
                         ),
-                        SizedBox(height: 1.5.h,),
-                        Text(
-                          'Tanggal Lahir',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
+                        SizedBox(height: 1.5.h),
+
+                        // ── TANGGAL LAHIR ──
+                        _buildLabel('Tanggal Lahir'),
+                        _buildFieldRow(
+                          svgIcon: 'assets/icon/icon_user.svg',
+                          iconHeight: 2.65.h,
+                          error: tglLahirError,
+                          field: TextFormField(
+                            controller: tglLahirController,
+                            readOnly: true,
+                            onTap: () async {
+                              FocusScope.of(context).unfocus();
+
+                              final pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime.now(),
+                              );
+
+                              if (pickedDate != null) {
+                                tglLahirValue =
+                                "${pickedDate.day.toString().padLeft(2, '0')}-"
+                                    "${pickedDate.month.toString().padLeft(2, '0')}-"
+                                    "${pickedDate.year}";
+
+                                tglLahirController.text = formatTanggalIndonesia(
+                                  tglLahirValue,
+                                );
+
+                                if (tglLahirError != null) {
+                                  setState(() => tglLahirError = null);
+                                }
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Masukkan Tanggal Lahir Anak",
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.abu_abu,
-                                width: 1.5,
                               ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.abu_abu,
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_user.svg',
-                                        height: 2.65.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: tglLahirController,
-                                      readOnly: true,
-                                      onTap: () async {
-                                        FocusScope.of(context).unfocus();
-
-                                        final pickedDate = await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now(),
-                                        );
-
-                                        if (pickedDate != null) {
-                                          tglLahirValue =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-"
-                                              "${pickedDate.month.toString().padLeft(2, '0')}-"
-                                              "${pickedDate.year}";
-
-                                          tglLahirController.text = formatTanggalIndonesia(
-                                            tglLahirValue,
-                                          );
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: "Masukkan Tanggal Lahir Anak",
-                                        hintStyle: GoogleFonts.poppins(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.abu_abu,
-                                        ),
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
                         ),
-                        SizedBox(height: 1.5.h,)
+                        SizedBox(height: 1.5.h),
                       ],
                     ),
                   ),
@@ -513,48 +452,54 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
               ),
             ),
             SizedBox(height: 5.h),
+
+            // ── TOMBOL SIMPAN ──
             SizedBox(
               width: double.infinity,
-
               child: ElevatedButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
 
-                  List<String> errors = [];
+                  bool hasError = false;
 
                   if (namaController.text.trim().isEmpty) {
-                    errors.add("• Nama anak belum diisi");
+                    namaError = "Nama anak belum diisi";
+                    hasError = true;
+                  } else {
+                    namaError = null;
                   }
 
                   if (emailController.text.trim().isEmpty) {
-                    errors.add("• Email anak belum diisi");
+                    emailError = "Email anak belum diisi";
+                    hasError = true;
+                  } else {
+                    emailError = null;
                   }
 
                   if (nomorHpController.text.trim().isEmpty) {
-                    errors.add("• Nomor HP anak belum diisi");
+                    nomorHpError = "Nomor HP anak belum diisi";
+                    hasError = true;
+                  } else {
+                    nomorHpError = null;
                   }
 
                   if (alamatController.text.trim().isEmpty) {
-                    errors.add("• Alamat anak belum diisi");
+                    alamatError = "Alamat anak belum diisi";
+                    hasError = true;
+                  } else {
+                    alamatError = null;
                   }
 
                   if (tglLahirValue.isEmpty) {
-                    errors.add("• Tanggal lahir anak belum diisi");
+                    tglLahirError = "Tanggal lahir anak belum diisi";
+                    hasError = true;
+                  } else {
+                    tglLahirError = null;
                   }
 
-                  if (errors.isNotEmpty) {
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.warning,
-                      animType: AnimType.scale,
-                      title: 'Data Belum Lengkap',
-                      desc: errors.join('\n'),
-                      btnOkText: 'OK',
-                      btnOkOnPress: () {},
-                    ).show();
+                  setState(() {});
 
-                    return;
-                  }
+                  if (hasError) return;
 
                   print("===== DATA ANAK =====");
                   print("Nama         : ${namaController.text}");
@@ -563,21 +508,17 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
                   print("Alamat       : ${alamatController.text}");
                   print("TanggalLahir : $tglLahirValue");
                 },
-
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.hijau,
                   foregroundColor: Colors.white,
-
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-
                   padding: EdgeInsets.symmetric(
                     vertical: 1.5.h,
                     horizontal: 2.h,
                   ),
                 ),
-
                 child: Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
