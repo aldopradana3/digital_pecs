@@ -167,6 +167,86 @@ final List<Anak> daftarAnak = [
         nama: 'Sate Ayam',
         gambar: 'https://picsum.photos/id/488/300/300',
       ),
+      ItemAnak(
+        nama: 'Bakso',
+        gambar: 'https://picsum.photos/id/1080/300/300',
+      ),
+      ItemAnak(
+        nama: 'Mie Ayam',
+        gambar: 'https://picsum.photos/id/292/300/300',
+      ),
+      ItemAnak(
+        nama: 'Nasi Goreng',
+        gambar: 'https://picsum.photos/id/431/300/300',
+      ),
+      ItemAnak(
+        nama: 'Sate Ayam',
+        gambar: 'https://picsum.photos/id/488/300/300',
+      ),
+      ItemAnak(
+        nama: 'Bakso',
+        gambar: 'https://picsum.photos/id/1080/300/300',
+      ),
+      ItemAnak(
+        nama: 'Mie Ayam',
+        gambar: 'https://picsum.photos/id/292/300/300',
+      ),
+      ItemAnak(
+        nama: 'Nasi Goreng',
+        gambar: 'https://picsum.photos/id/431/300/300',
+      ),
+      ItemAnak(
+        nama: 'Sate Ayam',
+        gambar: 'https://picsum.photos/id/488/300/300',
+      ),
+      ItemAnak(
+        nama: 'Bakso',
+        gambar: 'https://picsum.photos/id/1080/300/300',
+      ),
+      ItemAnak(
+        nama: 'Mie Ayam',
+        gambar: 'https://picsum.photos/id/292/300/300',
+      ),
+      ItemAnak(
+        nama: 'Nasi Goreng',
+        gambar: 'https://picsum.photos/id/431/300/300',
+      ),
+      ItemAnak(
+        nama: 'Sate Ayam',
+        gambar: 'https://picsum.photos/id/488/300/300',
+      ),
+      ItemAnak(
+        nama: 'Bakso',
+        gambar: 'https://picsum.photos/id/1080/300/300',
+      ),
+      ItemAnak(
+        nama: 'Mie Ayam',
+        gambar: 'https://picsum.photos/id/292/300/300',
+      ),
+      ItemAnak(
+        nama: 'Nasi Goreng',
+        gambar: 'https://picsum.photos/id/431/300/300',
+      ),
+      ItemAnak(
+        nama: 'Sate Ayam',
+        gambar: 'https://picsum.photos/id/488/300/300',
+      ),
+      ItemAnak(
+        nama: 'Bakso',
+        gambar: 'https://picsum.photos/id/1080/300/300',
+      ),
+      ItemAnak(
+        nama: 'Mie Ayam',
+        gambar: 'https://picsum.photos/id/292/300/300',
+      ),
+      ItemAnak(
+        nama: 'Nasi Goreng',
+        gambar: 'https://picsum.photos/id/431/300/300',
+      ),
+      ItemAnak(
+        nama: 'Sate Ayam',
+        gambar: 'https://picsum.photos/id/488/300/300',
+      ),
     ],
   ),
 

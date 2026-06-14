@@ -75,22 +75,15 @@ class _MariBermainPageState extends State<MariBermainPage> {
     await flutterTts.speak(text);
   }
 
-  void showInfoPopup() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              "https://picsum.photos/400/500",
-              fit: BoxFit.cover,
-            ),
-          ),
-        );
-      },
-    );
+  Future<void> speakHelp() async {
+    await flutterTts.stop();
+
+    await flutterTts.setLanguage("id-ID");
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setSpeechRate(0.4);
+    await flutterTts.setPitch(1.0);
+
+    await flutterTts.speak("Saya Butuh Bantuan");
   }
 
   @override
@@ -170,7 +163,7 @@ class _MariBermainPageState extends State<MariBermainPage> {
 
                   // INFO BUTTON
                   GestureDetector(
-                    onTap: showInfoPopup,
+                    onTap: speakHelp,
                     child: Container(
                       width: 4.5.h,
                       height: 4.5.h,

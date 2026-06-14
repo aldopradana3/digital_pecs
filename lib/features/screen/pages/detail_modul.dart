@@ -27,7 +27,8 @@ class DetailModulPage extends StatefulWidget {
   State<DetailModulPage> createState() => _DetailModulPageState();
 }
 
-class _DetailModulPageState extends State<DetailModulPage> {
+class _DetailModulPageState extends State<DetailModulPage>
+    with TickerProviderStateMixin {
   Anak? selectedAnak;
   late FlutterTts flutterTts;
   File? _pickedImageDialog; // ← tambah ini
@@ -53,6 +54,9 @@ class _DetailModulPageState extends State<DetailModulPage> {
 
   @override
   void dispose() {
+    for (final c in _animControllers.values) {
+      c.dispose();
+    }
     flutterTts.stop();
     searchController.dispose();
     _closeDropdown();
@@ -114,6 +118,13 @@ class _DetailModulPageState extends State<DetailModulPage> {
                     _overlayEntry?.markNeedsBuild();
                   },
                   onSelect: (anak) {
+                    // Dispose semua controller lama
+                    for (final c in _animControllers.values) {
+                      c.dispose();
+                    }
+                    _animControllers.clear();
+                    _scaleAnimations.clear();
+
                     setState(() {
                       selectedAnak = anak;
                       _displayItems = List.from(anak.items);
@@ -145,6 +156,10 @@ class _DetailModulPageState extends State<DetailModulPage> {
     HapticFeedback.lightImpact();
     setState(() {
       _displayItems.removeAt(index);
+      // Dispose dan hapus controller item yang dihapus
+      _animControllers[index]?.dispose();
+      _animControllers.remove(index);
+      _scaleAnimations.remove(index);
     });
   }
 
@@ -300,7 +315,26 @@ class _DetailModulPageState extends State<DetailModulPage> {
 
   // ─── GRID ITEM CARD ─────────────────────────────────────────────
 
+  final Map<int, AnimationController> _animControllers = {};
+  final Map<int, Animation<double>> _scaleAnimations = {};
+
   Widget _buildItemCard(ItemAnak item, int index) {
+    // Buat controller jika belum ada
+    if (!_animControllers.containsKey(index)) {
+      final controller = AnimationController(
+        vsync: this, // ← perlu TickerProviderStateMixin
+        duration: const Duration(milliseconds: 120),
+      );
+      _animControllers[index] = controller;
+      _scaleAnimations[index] = Tween<double>(
+        begin: 1.0,
+        end: 0.88,
+      ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
+    }
+
+    final scaleAnim = _scaleAnimations[index]!;
+    final controller = _animControllers[index]!;
+
     return GestureDetector(
       onTap: () {
         if (_isEditMode) {
@@ -309,109 +343,126 @@ class _DetailModulPageState extends State<DetailModulPage> {
           speak(item.nama);
         }
       },
-      onLongPress: _isEditMode ? null : _enterEditMode,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // ── Card ──
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.biru,
-                width: 1.5,
+      onLongPressStart: (_) async {
+        if (_isEditMode) return;
+        // Animasi mengecil
+        await controller.forward();
+        // Getar
+        HapticFeedback.mediumImpact();
+        // Kembali ke ukuran normal
+        await controller.reverse();
+        // Masuk edit mode
+        _enterEditMode();
+      },
+      child: ScaleTransition(
+        scale: scaleAnim,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // ── Card ──
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.biru, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(.08),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    child: item.gambar.isNotEmpty
-                        ? item.gambar.startsWith('http')
-                              ? Image.network(
-                                  item.gambar,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Icon(
-                                    Icons.image_not_supported_outlined,
-                                    color: Colors.grey.shade300,
-                                    size: 4.h,
-                                  ),
-                                )
-                              : Image.file(
-                                  File(item.gambar),
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Icon(
-                                    Icons.image_not_supported_outlined,
-                                    color: Colors.grey.shade300,
-                                    size: 4.h,
-                                  ),
-                                )
-                        : Center(
-                            child: Icon(
-                              Icons.image_outlined,
-                              color: Colors.grey.shade300,
-                              size: 4.h,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      child: item.gambar.isNotEmpty
+                          ? item.gambar.startsWith('http')
+                                ? SizedBox.expand(
+                                    child: Image.network(
+                                      item.gambar,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Center(
+                                        child: Icon(
+                                          Icons.image_not_supported_outlined,
+                                          color: Colors.grey.shade300,
+                                          size: 4.h,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox.expand(
+                                    child: Image.file(
+                                      File(item.gambar),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Center(
+                                        child: Icon(
+                                          Icons.image_not_supported_outlined,
+                                          color: Colors.grey.shade300,
+                                          size: 4.h,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                          : Center(
+                              child: Icon(
+                                Icons.image_outlined,
+                                color: Colors.grey.shade300,
+                                size: 4.h,
+                              ),
                             ),
-                          ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(1.h),
-                  child: Text(
-                    item.nama,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                      color: AppColors.biru,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Tombol hapus (pojok kiri atas) saat edit mode ──
-          if (_isEditMode)
-            Positioned(
-              top: -1.h,
-              left: -1.h,
-              child: GestureDetector(
-                onTap: () => _deleteItem(index),
-                child: Container(
-                  width: 3.h,
-                  height: 3.h,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+                  Padding(
+                    padding: EdgeInsets.all(1.h),
+                    child: Text(
+                      item.nama,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                        color: AppColors.biru,
+                        height: 1
+                      ),
+                    ),
                   ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      "assets/icon/icon_hapus.svg",
-                      width: 2.h,
-                      height: 2.h,
-                      color: Colors.white,
+                ],
+              ),
+            ),
+
+            // ── Tombol hapus pojok kiri atas ──
+            if (_isEditMode)
+              Positioned(
+                top: -1.h,
+                left: -1.h,
+                child: GestureDetector(
+                  onTap: () => _deleteItem(index),
+                  child: Container(
+                    width: 3.h,
+                    height: 3.h,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        "assets/icon/icon_hapus.svg",
+                        width: 2.h,
+                        height: 2.h,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -451,7 +502,9 @@ class _DetailModulPageState extends State<DetailModulPage> {
   @override
   Widget build(BuildContext context) {
     debugPaintSizeEnabled = false;
-    final int totalCount = _displayItems.length + 1;
+    final int totalCount = _isEditMode
+        ? _displayItems.length
+        : _displayItems.length + 1;
     return GestureDetector(
       // Tap di luar → batalkan mode hapus
       onTap: () {
@@ -600,17 +653,15 @@ class _DetailModulPageState extends State<DetailModulPage> {
                   // ── GRID (scroll hanya di sini) ──
                   // ── GRID (scroll hanya di sini) ──
                   if (selectedAnak != null)
-                    Expanded(                          // ← Expanded langsung di Column utama
+                    Expanded(
+                      // ← Expanded langsung di Column utama
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.all(1.5.h),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.biru,
-                            width: 2,
-                          ),
+                          border: Border.all(color: AppColors.biru, width: 2),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.08),
@@ -621,14 +672,16 @@ class _DetailModulPageState extends State<DetailModulPage> {
                         ),
                         child: GridView.builder(
                           itemCount: totalCount,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.95,
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.95,
+                              ),
                           itemBuilder: (context, index) {
-                            if (index == _displayItems.length) return _buildAddCard();
+                            if (index == _displayItems.length)
+                              return _buildAddCard();
                             return _buildItemCard(_displayItems[index], index);
                           },
                         ),
@@ -672,7 +725,10 @@ class _DetailModulPageState extends State<DetailModulPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 2.h),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 1.5.h,
+                            horizontal: 2.h,
+                          ),
                         ),
                         child: Center(
                           child: Row(

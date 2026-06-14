@@ -40,6 +40,11 @@ class _DetailAnakPageState extends State<DetailAnakPage> {
   @override
   Widget build(BuildContext context) {
     debugPaintSizeEnabled = false;
+    Future<void> _onRefresh() async {
+      await Future.delayed(const Duration(milliseconds: 500));
+      setState(() {});
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: PreferredSize(
@@ -109,397 +114,401 @@ class _DetailAnakPageState extends State<DetailAnakPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(left: 2.h, right: 2.h, bottom: 2.h, top: 1.h),
-        child: Column(
-          children: [
-            Container(
-              width: 100.w,
-              padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 3.h),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        color: AppColors.biru,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(left: 2.h, right: 2.h, bottom: 2.h, top: 1.h),
+          child: Column(
+            children: [
+              Container(
+                width: 100.w,
+                padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 3.h),
 
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Informasi Anak',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.biru,
+                      ),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    Padding(
+                      padding: EdgeInsets.only(left: 1.5.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Nama',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.abu_abu,
+                            ),
+                          ),
+                          Container(
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.abu_abu,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 6.h,
+                                      height: 4.h,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icon/icon_user.svg',
+                                          height: 2.65.h,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: widget.namaSiswa,
+                                        readOnly: true,
+                                        minLines: 1,
+                                        maxLines: null,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                        ),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.abu_abu,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 1.5.h),
+                          Text(
+                            'Email',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.abu_abu,
+                            ),
+                          ),
+                          Container(
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.abu_abu,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 6.h,
+                                      height: 4.h,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icon/icon_email.svg',
+                                          height: 2.h,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: widget.emailSiswa,
+                                        readOnly: true,
+                                        minLines: 1,
+                                        maxLines: null,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                        ),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.abu_abu,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 1.5.h),
+                          Text(
+                            'Nomor HP',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.abu_abu,
+                            ),
+                          ),
+                          Container(
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.abu_abu,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 6.h,
+                                      height: 4.h,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icon/icon_telpon.svg',
+                                          height: 2.5.h,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: widget.nomorHpSiswa,
+                                        readOnly: true,
+                                        minLines: 1,
+                                        maxLines: null,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                        ),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.abu_abu,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 1.5.h),
+                          Text(
+                            'Alamat',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.abu_abu,
+                            ),
+                          ),
+                          Container(
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.abu_abu,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 6.h,
+                                      height: 4.h,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icon/icon_alamat.svg',
+                                          height: 2.5.h,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: widget.alamatSiswa,
+                                        readOnly: true,
+                                        minLines: 1,
+                                        maxLines: null,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                        ),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.abu_abu,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 1.5.h,),
+                          Text(
+                            'Tanggal Lahir',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.abu_abu,
+                            ),
+                          ),
+                          Container(
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppColors.abu_abu,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 6.h,
+                                      height: 4.h,
+                                      child: Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icon/icon_user.svg',
+                                          height: 2.65.h,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: formatTanggalIndonesia(
+                                          widget.tglLahirSiswa,
+                                        ),
+                                        readOnly: true,
+                                        minLines: 1,
+                                        maxLines: null,
+                                        decoration: const InputDecoration(
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                        ),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.abu_abu,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 1.5.h,)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Informasi Anak',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.biru,
+              SizedBox(height: 5.h),
+              SizedBox(
+                width: double.infinity,
+
+                child: ElevatedButton(
+                  onPressed: () {
+                  },
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.merah,
+                    foregroundColor: Colors.white,
+
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+
+                    padding: EdgeInsets.symmetric(
+                      vertical: 1.5.h,
+                      horizontal: 2.h,
                     ),
                   ),
-                  SizedBox(height: 1.5.h),
-                  Padding(
-                    padding: EdgeInsets.only(left: 1.5.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        SvgPicture.asset(
+                          "assets/icon/icon_hapus.svg",
+                          height: 2.5.h,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 1.h),
                         Text(
-                          'Nama',
+                          "Hapus Anak",
                           style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
+                            fontSize: 1.75.h,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.abu_abu,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_user.svg',
-                                        height: 2.65.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      initialValue: widget.namaSiswa,
-                                      readOnly: true,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 1.5.h),
-                        Text(
-                          'Email',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.abu_abu,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_email.svg',
-                                        height: 2.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      initialValue: widget.emailSiswa,
-                                      readOnly: true,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 1.5.h),
-                        Text(
-                          'Nomor HP',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.abu_abu,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_telpon.svg',
-                                        height: 2.5.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      initialValue: widget.nomorHpSiswa,
-                                      readOnly: true,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 1.5.h),
-                        Text(
-                          'Alamat',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.abu_abu,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_alamat.svg',
-                                        height: 2.5.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      initialValue: widget.alamatSiswa,
-                                      readOnly: true,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 1.5.h,),
-                        Text(
-                          'Tanggal Lahir',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.abu_abu,
-                          ),
-                        ),
-                        Container(
-                          width: 100.w,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: AppColors.abu_abu,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 6.h,
-                                    height: 4.h,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icon/icon_user.svg',
-                                        height: 2.65.h,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      initialValue: formatTanggalIndonesia(
-                                        widget.tglLahirSiswa,
-                                      ),
-                                      readOnly: true,
-                                      minLines: 1,
-                                      maxLines: null,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.zero,
-                                        border: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                      ),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.abu_abu,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 0.5.h),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 1.5.h,)
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 5.h),
-            SizedBox(
-              width: double.infinity,
-
-              child: ElevatedButton(
-                onPressed: () {
-                },
-
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.merah,
-                  foregroundColor: Colors.white,
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-
-                  padding: EdgeInsets.symmetric(
-                    vertical: 1.5.h,
-                    horizontal: 2.h,
-                  ),
-                ),
-
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icon/icon_hapus.svg",
-                        height: 2.5.h,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 1.h),
-                      Text(
-                        "Hapus Anak",
-                        style: GoogleFonts.poppins(
-                          fontSize: 1.75.h,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 3.h),
-          ],
+              SizedBox(height: 3.h),
+            ],
+          ),
         ),
       ),
     );
