@@ -34,6 +34,14 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
   String? alamatError;
   String? tglLahirError;
 
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$').hasMatch(email);
+  }
+
+  bool _isValidPhone(String phone) {
+    return RegExp(r'^[0-9]+$').hasMatch(phone);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -472,12 +480,18 @@ class _TambahAnakPageState extends State<TambahAnakPage> {
                   if (emailController.text.trim().isEmpty) {
                     emailError = "Email anak belum diisi";
                     hasError = true;
+                  } else if (!_isValidEmail(emailController.text.trim())) {
+                    emailError = "Format email tidak valid";
+                    hasError = true;
                   } else {
                     emailError = null;
                   }
 
                   if (nomorHpController.text.trim().isEmpty) {
                     nomorHpError = "Nomor HP anak belum diisi";
+                    hasError = true;
+                  } else if (!_isValidPhone(nomorHpController.text.trim())) {
+                    nomorHpError = "Nomor HP hanya boleh berisi angka";
                     hasError = true;
                   } else {
                     nomorHpError = null;

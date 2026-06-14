@@ -8,16 +8,9 @@ import 'dart:math' as math;
 import '../../../core/color/app_colors.dart';
 import '../../../data/app_data.dart';
 
-class KelolaAnakPage extends StatelessWidget {
+class KelolaAnakPage extends StatefulWidget {
   final VoidCallback onOpenTambahAnak;
-  final Function(
-    String id,
-    String nama,
-    String email,
-    String noHp,
-    String alamat,
-    String tglLahir,
-  )
+  final Function(String, String, String, String, String, String)
   onOpenDetailAnak;
   final VoidCallback onGoBack;
 
@@ -27,6 +20,17 @@ class KelolaAnakPage extends StatelessWidget {
     required this.onOpenDetailAnak,
     required this.onGoBack,
   });
+
+  @override
+  State<KelolaAnakPage> createState() => _KelolaAnakPageState();
+}
+
+class _KelolaAnakPageState extends State<KelolaAnakPage> {
+
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {}); // reload daftarSiswa
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,7 @@ class KelolaAnakPage extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: () {
-                      onGoBack();
+                      widget.onGoBack();
                     },
                     child: Container(
                       width: 4.5.h,
@@ -101,81 +105,80 @@ class KelolaAnakPage extends StatelessWidget {
         ),
       ),
 
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(2.h),
-        child: Column(
-          children: [
-            ...daftarSiswa.map((siswa) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 1.5.h),
-                child: InkWell(
-                  onTap: () {
-                    onOpenDetailAnak(
-                      siswa.id,
-                      siswa.nama,
-                      siswa.email,
-                      siswa.nomorHp,
-                      siswa.alamat,
-                      siswa.tglLahir,
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 3.5.h,
-                      vertical: 3.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.biru,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            siswa.nama,
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        color: AppColors.biru,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(2.h),
+          child: Column(
+            children: [
+              ...daftarSiswa.map((siswa) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 1.5.h),
+                  child: InkWell(
+                    onTap: () {
+                      widget.onOpenDetailAnak(
+                        siswa.id,
+                        siswa.nama,
+                        siswa.email,
+                        siswa.nomorHp,
+                        siswa.alamat,
+                        siswa.tglLahir,
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.5.h,
+                        vertical: 3.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.biru,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              siswa.nama,
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 2.h),
-                        Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.rotationY(math.pi),
-                          child: SvgPicture.asset(
-                            "assets/icon/icon_back.svg",
-                            width: 2.2.h,
-                            height: 2.2.h,
-                            color: Colors.white,
+                          SizedBox(width: 2.h),
+                          Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: SvgPicture.asset(
+                              "assets/icon/icon_back.svg",
+                              width: 2.2.h,
+                              height: 2.2.h,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-            SizedBox(height: 7.5.h,)
-          ],
+                );
+              }).toList(),
+              SizedBox(height: 7.5.h),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          right: 2.h,
-          bottom: 2.h,
-        ),
+        padding: EdgeInsets.only(right: 2.h, bottom: 2.h),
         child: InkWell(
-          onTap: onOpenTambahAnak,
+          onTap: widget.onOpenTambahAnak,
           borderRadius: BorderRadius.circular(10),
           child: Container(
             height: 5.5.h,
-            padding: EdgeInsets.symmetric(
-              horizontal: 1.5.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 1.5.h),
             decoration: BoxDecoration(
               color: AppColors.biru,
               borderRadius: BorderRadius.circular(10),
