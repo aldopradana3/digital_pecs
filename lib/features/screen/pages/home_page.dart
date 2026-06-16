@@ -1,3 +1,4 @@
+import 'package:digital_pecs/api/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isGuru = UserLogin.email == "guru@gmail.com";
+    final bool isGuru = User.role == "Guru" || User.role == "SuperAdmin";
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -96,7 +97,11 @@ class HomePage extends StatelessWidget {
                           width: double.infinity,
 
                           child: ElevatedButton(
-                            onPressed: onOpenKelolaAnak,
+                            onPressed: () {
+                              onOpenKelolaAnak;
+                              print("Token sekarang: ${User.token}");
+                              print("Header sekarang: ${ApiService.headers}");
+                            },
 
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.biru,

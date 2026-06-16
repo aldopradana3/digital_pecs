@@ -1,6 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../api/api_service.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/color/app_colors.dart';
 import '../../data/app_data.dart';
@@ -50,29 +52,65 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _login(String email, String password) async {
+  Future<void> _login(
+      String email,
+      String password,
+      ) async {
     setState(() {
       _isSubmitted = true;
     });
 
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+    });
 
-    await Future.delayed(const Duration(seconds: 3));
+    bool success = false;
+
+    try {
+      success = await ApiService.login(
+        email: email,
+        password: password,
+      );
+
+      print("=================================");
+      print("LOGIN RESULT : $success");
+      print("TOKEN : ${User.token}");
+      print("USERNAME : ${User.username}");
+      print("EMAIL : ${User.email}");
+      print("ROLE : ${User.role}");
+      print("=================================");
+    } catch (e) {
+      print("LOGIN ERROR");
+      print(e);
+    }
 
     if (!mounted) return;
 
-    // simpan ke class
-    UserLogin.email = email;
-    UserLogin.password = password;
+    setState(() {
+      _isLoading = false;
+    });
 
-    setState(() => _isLoading = false);
-
-    Navigator.pushReplacementNamed(
-      context,
-      AppRoutes.main,
-    );
+    if (success) {
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.main,
+      );
+    } else {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.scale,
+        title: 'Login Gagal',
+        desc: ApiService.lastMessage.isNotEmpty
+            ? ApiService.lastMessage
+            : 'Email atau password salah',
+        btnOkOnPress: () {},
+      ).show();
+    }
   }
 
   @override
@@ -441,6 +479,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         context,
                         AppRoutes.daftar,
                       );
+                      print("Token sekarang: ${User.token}");
+                      print("Header sekarang: ${ApiService.headers}");
                     },
 
                     style: TextButton.styleFrom(

@@ -1,8 +1,3 @@
-class UserLogin {
-  static String email = '';
-  static String password = '';
-}
-
 class Siswa {
   final String id;
   final String nama;
@@ -324,3 +319,36 @@ final List<Anak> daftarAnak = [
     ],
   ),
 ];
+
+
+class User {
+  static String token = '';
+
+  static int id = 0;
+  static String username = '';
+  static String email = '';
+  static String role = '';
+  static String orangtuaId = '';
+  static String nohp = '';
+  static String alamat = '';
+  static String tglLahir = '';
+  static String status = '';
+
+  static bool isLoggedIn = false;
+
+  static void clear() {
+    token = '';
+
+    id = 0;
+    username = '';
+    email = '';
+    role = '';
+    orangtuaId = '';
+    nohp = '';
+    alamat = '';
+    tglLahir = '';
+    status = '';
+
+    isLoggedIn = false;
+  }
+}
