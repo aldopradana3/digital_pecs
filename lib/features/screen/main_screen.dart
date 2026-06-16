@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen>
     _tabController = TabController(length: 8, vsync: this);
 
     _tabController.addListener(() {
-      if (_isNavigating) return;        // ← abaikan saat navigasi programatik
+      if (_isNavigating) return; // ← abaikan saat navigasi programatik
       if (_tabController.indexIsChanging) return; // ← abaikan event animasi
 
       setState(() {
@@ -225,7 +225,6 @@ class _MainScreenState extends State<MainScreen>
   String selectedAlamatSiswa = "";
   String selectedTglLahirSiswa = "";
 
-
   String selectedIdModul = "";
   String selectedNamaModul = "";
 
@@ -235,7 +234,7 @@ class _MainScreenState extends State<MainScreen>
   Widget build(BuildContext context) {
     debugPaintSizeEnabled = false;
 
-    final bool isGuru = UserLogin.email == "guru@gmail.com";
+    final bool isGuru = User.role == "Guru" || User.role == "SuperAdmin";
 
     /// =========================
     /// ALL PAGES
@@ -276,20 +275,28 @@ class _MainScreenState extends State<MainScreen>
           goToPage(pageTambahAnak);
         },
 
-        onOpenDetailAnak: (idSiswa, namaSiswa, emailSiswa, nomorHpSiswa, alamatSiswa, tglLahirSiswa) async {
-          setState(() {
-            selectedIdSiswa = idSiswa;
-            selectedNamaSiswa = namaSiswa;
-            selectedEmailSiswa = emailSiswa;
-            selectedNomorHpSiswa = nomorHpSiswa;
-            selectedAlamatSiswa = alamatSiswa;
-            selectedTglLahirSiswa = tglLahirSiswa;
-          });
+        onOpenDetailAnak:
+            (
+              idSiswa,
+              namaSiswa,
+              emailSiswa,
+              nomorHpSiswa,
+              alamatSiswa,
+              tglLahirSiswa,
+            ) async {
+              setState(() {
+                selectedIdSiswa = idSiswa;
+                selectedNamaSiswa = namaSiswa;
+                selectedEmailSiswa = emailSiswa;
+                selectedNomorHpSiswa = nomorHpSiswa;
+                selectedAlamatSiswa = alamatSiswa;
+                selectedTglLahirSiswa = tglLahirSiswa;
+              });
 
-          await WidgetsBinding.instance.endOfFrame;
+              await WidgetsBinding.instance.endOfFrame;
 
-          goToPage(pageDetailAnak);
-        },
+              goToPage(pageDetailAnak);
+            },
         onGoBack: () {
           pageHistory.clear();
 
@@ -343,7 +350,6 @@ class _MainScreenState extends State<MainScreen>
         onGoBack: () {
           _goBack();
         },
-
       ),
 
       /// AKUN

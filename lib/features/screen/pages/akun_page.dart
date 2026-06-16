@@ -423,11 +423,16 @@ class _AkunPageState extends State<AkunPage> {
                 width: double.infinity,
 
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    User.clear();
+                    print("TOKEN : ${User.token}");
+                    print("USERNAME : ${User.username}");
+                    print("EMAIL : ${User.email}");
+                    print("ROLE : ${User.role}");
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.login,
-                      (route) => false,
+                          (route) => false,
                     );
                   },
 
